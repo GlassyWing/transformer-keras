@@ -121,6 +121,8 @@ examples/train_test.py
     "Two women wearing red and a man coming out of a port @-@ a @-@ potty ."
     ```
 
+    符号`@-@`表示这是一个连接左右两词的连接符，即`port @-@ a @-@ potty`是一个词`port-a-potty`。这么做只是为了方便训练。
+
     目标句子如下：
 
     ```python
