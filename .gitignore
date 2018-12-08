@@ -1,0 +1,10 @@
+*.egg-info/
+dist/
+.idea/
+data/*.json
+models/
+logs/
+tests/
+*.h5
+*.txt
+data/*.csv
