@@ -14,10 +14,9 @@ def print_result(result):
 
 if __name__ == '__main__':
     en2de_translator = get_or_create("../data/default-config.json",
+                                     src_dict_path="../data/dict_en.json",
+                                     tgt_dict_path="../data/dict_de.json",
                                      weights_path="../models/weights.32-1.38.h5")
-
-    src_tokenizer, tgt_tokenizer = load_dictionaries("../data/dict_en.json",
-                                                     "../data/dict_de.json")
 
     sentences = [
         'A brunette woman is standing on the sidewalk looking down the road .',
@@ -35,8 +34,6 @@ if __name__ == '__main__':
     # Preheating model
     en2de_translator.beam_search_text_decode(
         ['Two women wearing red and a man coming out of a port @-@ a @-@ potty .'],
-        src_tokenizer=src_tokenizer,
-        tgt_tokenizer=tgt_tokenizer,
         delimiter=' ',
     )
 
@@ -45,8 +42,6 @@ if __name__ == '__main__':
         start_time = time.time()
         result = en2de_translator.beam_search_text_decode(
             [sent],
-            src_tokenizer=src_tokenizer,
-            tgt_tokenizer=tgt_tokenizer,
             delimiter=' ',
         )
         t = (time.time() - start_time) * 1000
