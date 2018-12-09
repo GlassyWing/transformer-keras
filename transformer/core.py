@@ -10,7 +10,7 @@ from keras.layers import Dropout, Lambda, Softmax, Dense, Add, Embedding, Conv1D
 from keras.optimizers import Adam
 from keras.preprocessing.sequence import pad_sequences
 
-from transformer.tools.text_preprocess import CustomTokenizer
+from transformer.tools.text_preprocess import CustomTokenizer, load_dictionary
 
 
 class LayerNormalization(Layer):
@@ -367,6 +367,8 @@ class Transformer:
                  num_heads=8,
                  ffn_dim=2048,
                  dropout=0.2,
+                 src_tokenizer=None,
+                 tgt_tokenizer=None,
                  weights_path=None):
 
         self.optimizer = optimizer
@@ -382,6 +384,8 @@ class Transformer:
 
         self.decode_model = None  # used in beam_search
         self.encode_model = None  # used in beam_search
+        self.src_tokenizer = src_tokenizer
+        self.tgt_tokenizer = tgt_tokenizer
 
         self.encoder = Encoder(src_vocab_size, src_max_len, num_layers, model_dim,
                                num_heads, ffn_dim, dropout)
@@ -442,6 +446,8 @@ class Transformer:
 
     def decode_sequence(self, input_seq, tgt_tokenizer: CustomTokenizer,
                         delimiter=' '):
+        assert self.tgt_tokenizer is not None
+
         src_seq = self.seq_to_matrix(input_seq)
         target_seq = np.zeros((1, self.tgt_max_len))
 
@@ -460,11 +466,10 @@ class Transformer:
             target_seq[0, i + 1] = cur_idx
         return delimiter.join(decoded_tokens[: -1])
 
-    def decode_text(self, texts, src_tokenizer: CustomTokenizer,
-                    tgt_tokenizer: CustomTokenizer,
-                    delimiter=' '):
-        sequences = src_tokenizer.texts_to_sequences(texts)
-        return self.decode_sequence(sequences, tgt_tokenizer, delimiter)
+    def decode_text(self, texts, delimiter=' '):
+        assert self.src_tokenizer is not None
+        sequences = self.src_tokenizer.texts_to_sequences(texts)
+        return self.decode_sequence(sequences, self.tgt_tokenizer, delimiter)
 
     def seq_to_matrix(self, input_seq):
         max_len = min(len(max(input_seq, key=len)), self.src_max_len)
@@ -491,11 +496,14 @@ class Transformer:
         self.encode_model.compile('adam', 'mse')
         self.decode_model.compile('adam', 'mse')
 
-    def decode_sequence_fast(self, input_seq, tgt_tokenizer: CustomTokenizer,
-                             delimiter=' '):
+    def decode_sequence_fast(self, input_seq, delimiter=' '):
+        assert self.tgt_tokenizer is not None
+
         if self.decode_model is None: self.make_fast_decode_model()
         src_seq = self.seq_to_matrix(input_seq)
         enc_output = self.encode_model.predict_on_batch(src_seq)
+
+        tgt_tokenizer = self.tgt_tokenizer
 
         start_token_id = tgt_tokenizer.word_index[tgt_tokenizer.start_token]
         end_token_id = tgt_tokenizer.word_index[tgt_tokenizer.end_token]
@@ -514,20 +522,23 @@ class Transformer:
             target_seq[0, i + 1] = cur_index
         return delimiter.join(decoded_tokens)
 
-    def decode_text_fast(self, texts, src_tokenizer: CustomTokenizer,
-                         tgt_tokenizer: CustomTokenizer,
-                         delimiter=' '):
-        sequences = src_tokenizer.texts_to_sequences(texts)
-        return self.decode_sequence_fast(sequences, tgt_tokenizer, delimiter)
+    def decode_text_fast(self, texts, delimiter=' '):
+        assert self.src_tokenizer is not None
+
+        sequences = self.src_tokenizer.texts_to_sequences(texts)
+        return self.decode_sequence_fast(sequences, delimiter)
 
     def beam_search_sequence_decode(self, input_seq,
-                                    tgt_tokenizer: CustomTokenizer,
                                     topk=5, delimiter=' '):
         assert len(input_seq) == 1  # Only one sequence is currently supported
+        assert self.tgt_tokenizer is not None
+
         if self.decode_model is None: self.make_fast_decode_model()
         src_seq = self.seq_to_matrix(input_seq)  # [1, T_s]
         src_seq = src_seq.repeat(topk, axis=0)  # [1 * k, T_s]
         enc_out = self.encode_model.predict_on_batch(src_seq)  # [1 * k, T_s, model_dim]
+
+        tgt_tokenizer = self.tgt_tokenizer
 
         start_token_id = tgt_tokenizer.word_index[tgt_tokenizer.start_token]
         end_token_id = tgt_tokenizer.word_index[tgt_tokenizer.end_token]
@@ -577,14 +588,15 @@ class Transformer:
         return sequences
 
     def beam_search_text_decode(self, texts,
-                                src_tokenizer: CustomTokenizer,
-                                tgt_tokenizer: CustomTokenizer,
                                 k=5, delimiter=' '):
-        sequences = src_tokenizer.texts_to_sequences(texts)
-        return self.beam_search_sequence_decode(sequences, tgt_tokenizer, k, delimiter)
+        assert self.src_tokenizer is not None
+        sequences = self.src_tokenizer.texts_to_sequences(texts)
+        return self.beam_search_sequence_decode(sequences, k, delimiter)
 
     @staticmethod
     def get_or_create(config, optimizer=Adam(lr=1e-3, beta_1=0.9, beta_2=0.98, epsilon=1e-6),
+                      src_dict_path=None,
+                      tgt_dict_path=None,
                       weights_path=None):
 
         if Transformer.__singleton is None:
@@ -594,6 +606,10 @@ class Transformer:
                 with open(config, mode='r') as file:
                     config = dict(json.load(file))
             config['optimizer'] = optimizer
+            if src_dict_path is not None:
+                config['src_tokenizer'] = load_dictionary(src_dict_path)
+            if tgt_dict_path is not None:
+                config['tgt_tokenizer'] = load_dictionary(tgt_dict_path)
             Transformer.__singleton = Transformer(**config)
             try:
                 Transformer.__singleton.model.load_weights(weights_path)
