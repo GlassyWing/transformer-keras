@@ -6,5 +6,5 @@ models/
 logs/
 tests/
 *.h5
-*.txt
+data/*.txt
 data/*.csv
