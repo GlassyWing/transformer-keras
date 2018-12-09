@@ -64,32 +64,6 @@ examples/train_test.py
 
 详情见： `examples/decode_test.py`. 
 
-## 性能
-
-性能测试时模型使用的配置与默认配置相同
-
-### 训练时性能
-
-数据集包括 29000 个训练样例, 1014 个验证样例。
-
-| gpu    | batch_size | time (s / per epoch) |
-| ------ | ---------- | -------------------- |
-| 1070Ti | 64         | 38                   |
-
-### 解码/翻译性能
-
-
-
-| method                  | topk | mean time (ms) | max time (ms) |
-| ----------------------- | ---- | -------------- | ------------- |
-| beam_search_text_decode | 5    | 210.135        | 1061.358      |
-| decode_text             | /    | 90.555         | 309.771       |
-| decode_text_fast        | /    | 56.446         | 266.988       |
-
-**注意**：最大耗时一般只发生在模型未训练时，即使用一个完全未训练的模型进行解码。
-
-
-
 ## 效果
 
 ### 训练效果
@@ -101,7 +75,7 @@ examples/train_test.py
     <img src="assets/accuracies.png" width="49%">
 </div>
 
-由于数据集很小，通过缩小模型规模，应该能得到更高的精确度（如，设置model_dim=256）。
+可以发现迭代30次后，验证集精度达到了70%，由于数据集很小，通过缩小模型规模，应该能得到更高的精确度（如，设置model_dim=256）。
 
 ### 解码效果
 
@@ -137,7 +111,31 @@ examples/train_test.py
     | zwei frauen , die rot und ein mann kommen , verlassen aus einem &lt;UNK> .        | 0.742 |
     | zwei frauen , die rot und ein mann verlassen ist , verlassen aus einem &lt;UNK> . | 0.732 |
 
-## Bleu跑分
+## 性能
+
+性能测试时模型使用的配置与默认配置相同
+
+### 训练时性能
+
+数据集包括 29000 个训练样例, 1014 个验证样例。
+
+| gpu    | batch_size | time (s / per epoch) |
+| ------ | ---------- | -------------------- |
+| 1070Ti | 64         | 38                   |
+
+### 解码/翻译性能
+
+
+
+| method                  | topk | mean time (ms) | max time (ms) |
+| ----------------------- | ---- | -------------- | ------------- |
+| beam_search_text_decode | 5    | 210.135        | 1061.358      |
+| decode_text             | /    | 90.555         | 309.771       |
+| decode_text_fast        | /    | 56.446         | 266.988       |
+
+**注意**：最大耗时一般只发生在模型未训练时，即使用一个完全未训练的模型进行解码。
+
+## Bleu得分
 
 待续。。。
 
