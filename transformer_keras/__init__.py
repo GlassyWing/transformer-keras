@@ -1,6 +1,6 @@
 import json
 
-from transformer.core import Transformer
+from transformer_keras.core import Transformer
 
 get_or_create = Transformer.get_or_create
 

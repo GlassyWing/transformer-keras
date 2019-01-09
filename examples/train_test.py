@@ -1,9 +1,9 @@
 from keras.callbacks import ModelCheckpoint, TensorBoard
 from keras.optimizers import Adam
 
-from transformer import get_or_create, save_config
-from transformer.custom.callbacks import SGDRScheduler, LRFinder, WatchScheduler, LRSchedulerPerStep
-from transformer.data_loader import DataLoader
+from transformer_keras import get_or_create, save_config
+from transformer_keras.custom.callbacks import SGDRScheduler, LRFinder, WatchScheduler, LRSchedulerPerStep
+from transformer_keras.data_loader import DataLoader
 
 if __name__ == '__main__':
     train_file_path = "../data/en2de.s2s.txt"

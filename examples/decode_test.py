@@ -1,7 +1,7 @@
 import time
 
-from transformer import get_or_create
-from transformer.tools.text_preprocess import load_dictionaries
+from transformer_keras import get_or_create
+from transformer_keras.tools.text_preprocess import load_dictionaries
 
 
 def print_result(result):

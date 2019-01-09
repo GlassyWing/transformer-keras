@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 
-setup(name='transformer',
+setup(name='transformer-keras',
 
-      version='0.1',
+      version='0.1-SNAPSHOT',
 
       url='https://github.com/GlassyWing/transformer-keras',
 
@@ -12,11 +12,11 @@ setup(name='transformer',
 
       author_email='dengjiaxim@gmail.com',
 
-      description='inset pest predict model',
+      description='transformer keras version',
 
       packages=find_packages(exclude=['tests', 'examples']),
 
-      package_data={'transformer': ['*.*', 'checkpoints/*', 'config/*']},
+      package_data={'transformer-keras': ['*.*', 'checkpoints/*', 'config/*']},
 
       long_description=open('README.md', encoding="utf-8").read(),
 

@@ -10,7 +10,7 @@ from keras.layers import Dropout, Lambda, Softmax, Dense, Add, Embedding, Conv1D
 from keras.optimizers import Adam
 from keras.preprocessing.sequence import pad_sequences
 
-from transformer.tools.text_preprocess import CustomTokenizer, load_dictionary
+from transformer_keras.tools.text_preprocess import CustomTokenizer, load_dictionary
 
 
 class LayerNormalization(Layer):

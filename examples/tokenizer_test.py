@@ -1,4 +1,4 @@
-from transformer.tools.text_preprocess import make_dictionaries, save_dictionaries
+from transformer_keras.tools.text_preprocess import make_dictionaries, save_dictionaries
 
 if __name__ == '__main__':
     src_tokenizer, tgt_tokenizer = make_dictionaries("../data/en2de.s2s.all.txt",

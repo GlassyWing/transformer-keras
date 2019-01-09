@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from keras.preprocessing.sequence import pad_sequences
 
-from transformer.core import sequence_mask, padding_mask
-from transformer.tools.text_preprocess import load_dictionary
+from transformer_keras.core import sequence_mask, padding_mask
+from transformer_keras.tools.text_preprocess import load_dictionary
 
 if __name__ == '__main__':
     tokenizer = load_dictionary("../data/dict_en.json")

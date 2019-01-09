@@ -3,7 +3,7 @@ import json
 import h5py
 from keras.preprocessing.sequence import pad_sequences
 
-from transformer.tools.text_preprocess import tokenizer_from_json
+from transformer_keras.tools.text_preprocess import tokenizer_from_json
 
 
 class DataLoader:

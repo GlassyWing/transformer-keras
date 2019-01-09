@@ -1,4 +1,4 @@
-from transformer.data_loader import DataLoader
+from transformer_keras.data_loader import DataLoader
 
 if __name__ == '__main__':
     data_loader = DataLoader(src_dictionary_path="../data/dict_en.json",

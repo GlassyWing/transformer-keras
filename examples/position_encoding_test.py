@@ -1,4 +1,4 @@
-from transformer.core import PositionalEncoding
+from transformer_keras.core import PositionalEncoding
 import matplotlib.pyplot as plt
 import numpy as np
 
